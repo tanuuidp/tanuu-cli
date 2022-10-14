@@ -1,0 +1,70 @@
+package setup
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	l "github.com/k3d-io/k3d/v5/pkg/logger"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	coreV1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+)
+
+func CheckSetup(kubeconfig string) {
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// create the clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+	for {
+		crossplane, err := clientset.AppsV1().Deployments("crossplane-system").Get(context.TODO(), "crossplane", metav1.GetOptions{})
+
+		if errors.IsNotFound(err) {
+			fmt.Println("still working on it... please be patient...")
+		} else {
+			fmt.Println(crossplane.Name + " is now ready,")
+			fmt.Println("and off you go!")
+			fmt.Println()
+			fmt.Println("Do remember to cleanup after yourself here.")
+			return
+		}
+		time.Sleep(10 * time.Second)
+	}
+}
+
+func SetSecrets(kubeconfig string, secretdata string, namespace string, name string) {
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// create the clientset
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+	secret := &coreV1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: namespace,
+			Name:      name,
+		},
+		StringData: map[string]string{
+			"creds": secretdata,
+		},
+		Type: coreV1.SecretTypeOpaque,
+	}
+	createdSecret, err := clientset.CoreV1().Secrets(namespace).Create(context.TODO(), secret, metav1.CreateOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+	l.Log().Trace("Secrets data: %+v", createdSecret.Data)
+}

@@ -1,3 +1,7 @@
+# Localdev
+.DS_Store
+creds.*
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
