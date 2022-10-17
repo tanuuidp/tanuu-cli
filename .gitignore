@@ -1,6 +1,9 @@
 # Localdev
 .DS_Store
 creds.*
+*tmp
+.vscode
+
 
 # Binaries for programs and plugins
 *.exe

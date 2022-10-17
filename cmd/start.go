@@ -50,7 +50,8 @@ var startCmd = &cobra.Command{
 			}
 			l.Log().Trace(filename)
 		} else {
-			l.Log().Fatal("No valid deploy target specified.")
+			l.Log().Warn("Deploying empty tanuu")
+			// l.Log().Fatal("No valid deploy target specified.")
 		}
 
 		kubeconfig, err := NewCmdClusterCreate()
@@ -75,8 +76,9 @@ var startCmd = &cobra.Command{
 			}
 			setup.SetSecrets(kubeconfig, string(filename), "crossplane-system", "azure-creds")
 		} else {
-			l.Log().Fatal("No valid deploy target specified.")
-			panic(err.Error())
+			l.Log().Warn("Deployed empty tanuu")
+			// l.Log().Fatal("No valid deploy target specified.")
+			// panic(err.Error())
 		}
 
 		time.Sleep(120 * time.Second)
