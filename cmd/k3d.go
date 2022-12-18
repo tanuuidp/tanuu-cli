@@ -60,25 +60,59 @@ func NewCmdClusterCreate() (string, error) {
 	simpleCfg.Servers = 1
 	simpleCfg.Agents = 0
 	simpleCfg.Image = "docker.io/rancher/k3s:v1.23.8-k3s1"
-	simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-		Volume:      viper.GetString("localrepo") + "/bootstrap/base:/var/lib/rancher/k3s/server/manifests/base",
-		NodeFilters: filters,
-	})
+	if demo {
+		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
+			Volume:      viper.GetString("localrepo") + "/crds:/var/lib/rancher/k3s/server/manifests/crds",
+			NodeFilters: filters,
+		})
+		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
+			Volume:      viper.GetString("localrepo") + "/demo:/var/lib/rancher/k3s/server/manifests/demo",
+			NodeFilters: filters,
+		})
+		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
+			Volume:      viper.GetString("localrepo") + "/bootstrap:/var/lib/rancher/k3s/server/manifests/initial",
+			NodeFilters: filters,
+		})
+	}
 	if viper.GetBool("aws") {
 		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/bootstrap/aws:/var/lib/rancher/k3s/server/manifests/aws",
+			Volume:      viper.GetString("localrepo") + "/mgmtCluster/aws:/var/lib/rancher/k3s/server/manifests/aws",
+			NodeFilters: filters,
+		})
+		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
+			Volume:      viper.GetString("localrepo") + "/mgmtCluster/base:/var/lib/rancher/k3s/server/manifests/base",
 			NodeFilters: filters,
 		})
 	}
 	if viper.GetBool("azure") {
 		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/bootstrap/azure:/var/lib/rancher/k3s/server/manifests/azure",
+			Volume:      viper.GetString("localrepo") + "/mgmtCluster/azure:/var/lib/rancher/k3s/server/manifests/azure",
+			NodeFilters: filters,
+		})
+		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
+			Volume:      viper.GetString("localrepo") + "/mgmtCluster/base:/var/lib/rancher/k3s/server/manifests/base",
 			NodeFilters: filters,
 		})
 	}
-	filters = append(filters, "loadbalancer")
+	filters = append(filters, "server:0")
 	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
-		Port:        viper.GetString("port") + ":80",
+		Port:        viper.GetString("port1") + ":30081",
+		NodeFilters: filters,
+	})
+	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
+		Port:        viper.GetString("port2") + ":30082",
+		NodeFilters: filters,
+	})
+	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
+		Port:        viper.GetString("port3") + ":30083",
+		NodeFilters: filters,
+	})
+	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
+		Port:        viper.GetString("port4") + ":30084",
+		NodeFilters: filters,
+	})
+	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
+		Port:        viper.GetString("port5") + ":30085",
 		NodeFilters: filters,
 	})
 
@@ -126,4 +160,14 @@ func NewCmdClusterCreate() (string, error) {
 		l.Log().Error(err)
 	}
 	return kubecfg, nil
+}
+
+func DeleteCluster() {
+	simpleCfg, err := config.SimpleConfigFromViper(cfgViper)
+	simpleCfg.Name = "tanuu"
+	clusterConfig, err := config.TransformSimpleToClusterConfig(context.TODO(), runtimes.SelectedRuntime, simpleCfg)
+	if err != nil {
+		l.Log().Fatalln(err)
+	}
+	k3dCluster.ClusterDelete(context.TODO(), runtimes.SelectedRuntime, &clusterConfig.Cluster, k3d.ClusterDeleteOpts{})
 }

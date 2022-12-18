@@ -14,15 +14,21 @@ import (
 )
 
 var cfgFile string
+var demo bool
 
 func setDefaults() {
-	viper.SetDefault("port", "8081")
+	viper.SetDefault("port1", "8081")
+	viper.SetDefault("port2", "8082")
+	viper.SetDefault("port3", "7007")
+	viper.SetDefault("port4", "8084")
+	viper.SetDefault("port5", "8085")
 	viper.SetDefault("localrepo", "/tmp/temp-manifests")
+	viper.SetDefault("clustername", "tanuu")
 }
 
 var rootCmd = &cobra.Command{
 	Use:   "tanuu",
-	Short: "Bootstrap a Tanuu installation",
+	Short: "(BETA) Bootstrap a Tanuu installation",
 	Long: `This app will start a local K3D based single container kubernetes 'cluster'
 with the Tanuu setup tools installed and ready to boostrap a Tanuu management cluster.
 

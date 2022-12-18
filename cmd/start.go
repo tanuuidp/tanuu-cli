@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright (c) 2022 tanuuidp
 */
 package cmd
 
@@ -19,11 +19,12 @@ var aws bool
 var azure bool
 var filename []byte
 var configfile string
+var clustername string
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Start local Tanuu bootstrap server",
+	Short: "(BETA) Start local Tanuu bootstrap server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		os.Setenv("KUBECONFIG", "kubeconfig.tmp")
@@ -58,7 +59,7 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			l.Log().Fatal(err)
 		}
-		l.Log().Info("Waiting for Tanuu to be ready, this might take 2-3 minutes, grab a cuppa!")
+		l.Log().Info("Waiting for Tanuu bootstrap local cluster to be ready, this might take 2-3 minutes, grab a cuppa!")
 		l.Log().Debug(kubeconfig)
 
 		if aws {
@@ -67,14 +68,14 @@ var startCmd = &cobra.Command{
 				l.Log().Fatal("Cannot read creds for the AWS credentials")
 				panic(err.Error())
 			}
-			setup.SetSecrets(kubeconfig, string(filename), "crossplane-system", "aws-creds")
+			setup.SetCredentialSecrets(kubeconfig, string(filename), "crossplane-system", "aws-creds")
 		} else if azure {
 			filename, err := os.ReadFile(viper.GetString("creds"))
 			if err != nil {
 				l.Log().Fatal("Cannot read creds for the Azure credentials")
 				panic(err.Error())
 			}
-			setup.SetSecrets(kubeconfig, string(filename), "crossplane-system", "azure-creds")
+			setup.SetCredentialSecrets(kubeconfig, string(filename), "crossplane-system", "azure-creds")
 		} else {
 			l.Log().Warn("Deployed empty tanuu")
 			// l.Log().Fatal("No valid deploy target specified.")
@@ -97,4 +98,5 @@ func init() {
 	viper.BindPFlag("creds", rootCmd.PersistentFlags().Lookup("creds"))
 	viper.BindPFlag("aws", rootCmd.PersistentFlags().Lookup("aws"))
 	viper.BindPFlag("azure", rootCmd.PersistentFlags().Lookup("azure"))
+
 }
