@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -28,6 +27,7 @@ var demoCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		demo = true
 		os.Setenv("KUBECONFIG", "kubeconfig.tmp")
+		os.RemoveAll("kubeconfig.tmp")
 		os.RemoveAll(viper.GetString("localrepo"))
 		_, err := git.PlainClone(viper.GetString("localrepo"), false, &git.CloneOptions{
 			URL: "https://github.com/tanuuidp/tanuu",
@@ -50,16 +50,16 @@ var demoCmd = &cobra.Command{
 		l.Log().Debug(kubeconfig)
 
 		time.Sleep(45 * time.Second)
-		encoded1Text, err := base64.StdEncoding.DecodeString(viper.GetString("ghtoken"))
-		if err != nil {
-			panic(err)
-		}
-		encodedText, err := base64.StdEncoding.DecodeString(string(encoded1Text))
-		if err != nil {
-			panic(err)
-		}
+		// encoded1Text, err := base64.StdEncoding.DecodeString(viper.GetString("ghtoken"))
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// encodedText, err := base64.StdEncoding.DecodeString(string(encoded1Text))
+		// if err != nil {
+		// 	panic(err)
+		// }
 		setup.CheckDemo(kubeconfig)
-		setup.SetDemoBackstageSecrets(kubeconfig, string(encodedText))
+		setup.SetDemoBackstageSecrets(kubeconfig, string(viper.GetString("ghtoken")))
 		adminPW := ""
 		for adminPW == "" {
 			adminPW = setup.GetArgoSecrets(kubeconfig)

@@ -159,11 +159,7 @@ func SetCredentialSecrets(kubeconfig string, secretdata string, namespace string
 	l.Log().Trace("Secrets data: %+v", createdSecret.Data)
 }
 
-//TODO Add a 'create cluster for AWS/Azure from claim' section here
-
 //TODO apply all the yamls also to the newly created cluster
-
-//TODO dump all the yamls to a temp directory, so they can be added to repo
 
 //TODO setup some bootstrap user, in case of issues in ziti
 

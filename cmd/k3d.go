@@ -74,26 +74,6 @@ func NewCmdClusterCreate() (string, error) {
 			NodeFilters: filters,
 		})
 	}
-	if viper.GetBool("aws") {
-		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/mgmtCluster/aws:/var/lib/rancher/k3s/server/manifests/aws",
-			NodeFilters: filters,
-		})
-		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/mgmtCluster/base:/var/lib/rancher/k3s/server/manifests/base",
-			NodeFilters: filters,
-		})
-	}
-	if viper.GetBool("azure") {
-		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/mgmtCluster/azure:/var/lib/rancher/k3s/server/manifests/azure",
-			NodeFilters: filters,
-		})
-		simpleCfg.Volumes = append(simpleCfg.Volumes, conf.VolumeWithNodeFilters{
-			Volume:      viper.GetString("localrepo") + "/mgmtCluster/base:/var/lib/rancher/k3s/server/manifests/base",
-			NodeFilters: filters,
-		})
-	}
 	filters = append(filters, "server:0")
 	simpleCfg.Ports = append(simpleCfg.Ports, conf.PortWithNodeFilters{
 		Port:        viper.GetString("port1") + ":30081",

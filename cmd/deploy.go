@@ -4,10 +4,7 @@ Copyright (c) 2022 tanuuidp
 package cmd
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -21,18 +18,6 @@ var deployCmd = &cobra.Command{
 It will deploy the Tanuu artifacts to setup the given cluster as a Tanuu managment cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("deploy called")
-		input, err := ioutil.ReadFile("aws.tmpl")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		output := bytes.Replace(input, []byte("placeholder"), []byte(viper.GetString("clustername")), -1)
-
-		if err = ioutil.WriteFile("aws.yaml", output, 0666); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
 	},
 }
 

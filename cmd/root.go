@@ -30,21 +30,7 @@ var rootCmd = &cobra.Command{
 	Use:   "tanuu",
 	Short: "(BETA) Bootstrap a Tanuu installation",
 	Long: `This app will start a local K3D based single container kubernetes 'cluster'
-with the Tanuu setup tools installed and ready to boostrap a Tanuu management cluster.
-
-First, setup your credentials for the provider you are deploying to. 
-
-AWS:
-echo "[default]
-aws_access_key_id = <your access key ID>
-aws_secret_access_key = <your secret key>
-" > creds.conf.
-
-Azure:
-az ad sp create-for-rbac --name crossplane-demo --scopes /subscriptions/{SubID}/resourceGroups/{ResourceGroup} > creds.json
-
-
-Then, tanuu start...`,
+with the Tanuu setup tools installed and ready to boostrap a Tanuu management cluster.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -68,8 +54,6 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	// Add my subcommand palette
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "tanuu.env", "config file (default is tanuu.env)")
-
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
