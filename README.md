@@ -20,7 +20,7 @@ tanuu-cli demo --ghtoken <your token here>
 ```
 
 <details>
-<summary>Using a different `docker.sock` or podman</summary>
+<summary>Using podman or a different path to <code>docker.sock</code></summary>
 For example, when using rootless podman, the socket location must be reconfigured or the following error is likely encountered:
 
 ```text
@@ -57,7 +57,7 @@ Demo app (once deployed): http://127.0.0.1:8084
 To set the log level to `debug` for example, run tanuu-cli with the following environment variable set:
 
 ```shell
-LOG_LEVEL=debug tanuu-cli demo --ghtoken <your token here>>
+LOG_LEVEL=debug tanuu-cli demo --ghtoken <your token here>
 ```
 
 ## Bootstrapping a Tanuu management cluster
