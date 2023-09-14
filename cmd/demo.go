@@ -135,5 +135,5 @@ func argoResync(argotoken string) {
 		fmt.Println("Failure : ", err)
 	}
 	respBody, _ := io.ReadAll(resp.Body)
-	l.Log().Debug(respBody)
+	l.Log().Debug(string(respBody))
 }

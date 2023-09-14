@@ -36,11 +36,23 @@ with the Tanuu setup tools installed and ready to boostrap a Tanuu management cl
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	if ll := os.Getenv("LOG_LEVEL"); ll != "" {
+		level, err := logrus.ParseLevel(ll)
+		if err == nil {
+			l.Log().SetLevel(level)
+		}
+		if level == logrus.DebugLevel || level == logrus.TraceLevel {
+			// If LOG_LEVEL is debug or trace, we assume
+			// that the user wants to see the line numbers
+			// and function name.
+			l.Log().SetReportCaller(true)
+		}
+		l.Log().Info("Log level is ", level)
+	}
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
-
 }
 
 func init() {
